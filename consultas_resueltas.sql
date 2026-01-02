@@ -121,9 +121,18 @@ FROM film
 WHERE length > (SELECT AVG(length) FROM film);
 
 --25. Alquileres por mes
-SELECT DATE_TRUNC('month', rental_date) AS mes, COUNT(*)
-FROM rental
-GROUP BY mes;
+WITH alquileres AS (
+    SELECT
+        EXTRACT(MONTH FROM rental_date) AS mes
+    FROM rental
+)
+SELECT
+    mes,
+    COUNT(*) AS total_alquileres
+FROM alquileres
+GROUP BY mes
+ORDER BY mes;
+
 
 --26. Estadísticas de amount
 SELECT AVG(amount), STDDEV(amount), VARIANCE(amount)
@@ -384,4 +393,5 @@ CROSS JOIN staff;
 SELECT c.customer_id, c.first_name, c.last_name, COUNT(r.rental_id)
 FROM customer c
 LEFT JOIN rental r ON c.customer_id=r.customer_id
+
 GROUP BY c.customer_id;
